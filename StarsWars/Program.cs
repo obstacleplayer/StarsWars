@@ -1,12 +1,14 @@
-﻿using System;
+﻿using StarsWars.Services.Services;
+using System;
 
 namespace StarsWars
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            WarServices War = new WarServices();
+            War.StartWar();
         }
     }
 }
