@@ -1,21 +1,20 @@
-﻿using StarWars.Model.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using StarWars.Model.Entities;
 
 namespace StarsWars.Service
 {
     public class FavsManagersServices
     {
-        public static string GetFavs(HashSet<Soldiers> Rebels, HashSet<Soldiers> Stormtroopers)
+        public static string GetFavs(HashSet<Soldiers> rebels, HashSet<Soldiers> stormtroopers)
         {
-            return GetTotalDammage(Rebels) <= GetTotalDammage(Stormtroopers) ? Stormtroopers.FirstOrDefault().GetTypeTeam() : Rebels.FirstOrDefault().GetTypeTeam();
+            return GetTotalDamage(rebels) <= GetTotalDamage(stormtroopers)
+                ? stormtroopers.First().GetTypeTeam()
+                : rebels.First().GetTypeTeam();
         }
 
-        public static float GetTotalDammage(HashSet<Soldiers> Persons)
+        public static float GetTotalDamage(HashSet<Soldiers> Persons)
         {
-
             return Persons.Sum(item => item.Damage);
         }
     }

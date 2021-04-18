@@ -8,10 +8,10 @@ namespace StarsWars.Service
 {
     public class HeroesManagerServices
     {
-        public static Soldiers GetHero(HashSet<Soldiers> Soldiers)
+        public static Soldiers GetHero(HashSet<Soldiers> soldiers)
         {
 
-            return Soldiers.OrderByDescending(item => (item.Damage + item.Health) * 10).FirstOrDefault();
+            return soldiers.OrderByDescending(item => (item.Damage + item.Health) * 10).First();
         }
     }
 }

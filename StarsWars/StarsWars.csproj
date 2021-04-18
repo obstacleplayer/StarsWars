@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StarWars.Model\StarWars.Model.csproj" />
+    <ProjectReference Include="..\StarsWars.Service\StarsWars.Service.csproj" />
   </ItemGroup>
 
 </Project>
