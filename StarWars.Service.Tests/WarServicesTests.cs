@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using StarsWars.Model.Entities;
 using StarsWars.Service;
-using StarWars.Model.Entities;
 
 namespace StarWars.Service.Tests
 {
@@ -19,8 +20,20 @@ namespace StarWars.Service.Tests
         [TestMethod]
         public void CheckUnicityOfMatriculeSoldiersInitTests()
         {
-            _warServices.
+            List<Soldiers> _rebels = new List<Soldiers>();
+            List<Soldiers> _stormtroopers = new List<Soldiers>();
+            int SumOfSoldiers = 1000000;
+            for (var i = 0; i < SumOfSoldiers; i++)
+            {
+                var Rebel = new Rebels();
+                var Stormtrooper = new Stormtroopers();
+                _rebels.Add(Rebel);
+                _stormtroopers.Add(Stormtrooper);
+                Assert.AreNotSame(Rebel.Matricule, Stormtrooper.Matricule);
 
+            }
+
+            
         }
     }
 

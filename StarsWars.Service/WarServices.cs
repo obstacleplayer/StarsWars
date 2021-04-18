@@ -1,7 +1,7 @@
-﻿using System;
+﻿using StarsWars.Model.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using StarWars.Model.Entities;
 
 namespace StarsWars.Service
 {
@@ -24,15 +24,9 @@ namespace StarsWars.Service
             }
         }
 
-        public void SeparateLineConsole()
-        {
-            Console.WriteLine("".PadRight(100, '-'));
-        }
-
-        public Soldiers GetSoldierAlive(HashSet<Soldiers> soldiers)
-        {
-            return soldiers.FirstOrDefault(item => item.IsAlive);
-        }
+        public void SeparateLineConsole() => Console.WriteLine("".PadRight(100, '-'));
+        
+        public Soldiers GetSoldierAlive(HashSet<Soldiers> soldiers) => soldiers.FirstOrDefault(item => item.IsAlive);
 
         public void StartWar()
         {
@@ -103,7 +97,7 @@ namespace StarsWars.Service
                             Console.WriteLine("\nIl était le favorie");
                         else
                             Console.WriteLine("il n'était pas le favorie");
-                    }
+                    }   
                     else
                     {
                         SeparateLineConsole();

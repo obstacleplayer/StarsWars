@@ -1,8 +1,6 @@
-﻿using StarWars.Model.Entities;
-using System;
+﻿using StarsWars.Model.Entities;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace StarsWars.Service
 {
