@@ -7,8 +7,8 @@ namespace StarsWars
     {
         static void Main(string[] args)
         {
-            WarServices War = new WarServices();
-            War.StartWar();
+            WarServices war = new WarServices();
+            war.StartWar();
         }
     }
 }

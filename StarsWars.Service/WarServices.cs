@@ -7,109 +7,128 @@ namespace StarsWars.Service
 {
     public class WarServices
     {
-        private readonly HashSet<Soldiers> _rebels = new HashSet<Soldiers>();
-        private readonly HashSet<Soldiers> _stormtroopers = new HashSet<Soldiers>();
+        private List<Soldier> _rebels = new List<Soldier>();
+        private List<Soldier> _stormtroopers = new List<Soldier>();
         private readonly Random _random = new Random();
-
-        public void Init()
+        public bool Init(int nbSoldiers)
         {
-            Console.WriteLine("Combien Voulez vous de soldat");
-            var SumOfSoldiers = int.Parse(Console.ReadLine());
-            for (var i = 0; i < SumOfSoldiers; i++)
+            if (nbSoldiers < 0 || nbSoldiers > 10000)
             {
-                var Rebel = new Rebels();
-                var Stormtrooper = new Stormtroopers();
+                Console.WriteLine("Merci de choisir un nombre de soldats compris entre 0 et 10 000");
+                return false;
+            }
+
+            for (var i = 1; i <= nbSoldiers; i++)
+            {
+                var Rebel = new Rebel(i,
+                    _random.Next(1000, 2000),
+                    _random.Next(100, 500),
+                    _random.Next(1, 100),
+                    Role.Rebel);
+
+                var Stormtrooper = new Stormtrooper(i,
+                    _random.Next(1000, 2000),
+                    _random.Next(100, 500),
+                    _random.Next(1, 100),
+                    Role.Stormtrooper);
+
                 _rebels.Add(Rebel);
                 _stormtroopers.Add(Stormtrooper);
             }
+
+            DetermineHero(_rebels);
+            DetermineHero(_stormtroopers);
+
+            return true;
         }
 
+        public void DetermineHero(List<Soldier> soldiers) => HeroesManagerServices.GetHero(soldiers).IsHero = true;
+
         public void SeparateLineConsole() => Console.WriteLine("".PadRight(100, '-'));
+
+        public Soldier PickAnAliveSoldier(List<Soldier> soldiers) => soldiers.FirstOrDefault(item => item.IsAlive);
         
-        public Soldiers GetSoldierAlive(HashSet<Soldiers> soldiers) => soldiers.FirstOrDefault(item => item.IsAlive);
+        public void Fight(Soldier rebel, Soldier stormtrooper)
+        {
+            Soldier attacker;
+            Soldier victim;
+
+            var chooseWhoAttack = _random.Next(1, 10);
+
+            if (chooseWhoAttack % 2 == 0)
+            {
+                attacker = rebel;
+                victim = stormtrooper;
+            }
+            else
+            {
+                attacker = stormtrooper;
+                victim = rebel;
+            }
+
+            attacker.Attack(victim);
+            Console.WriteLine(
+                $"\nLe : {attacker.Role} au matricule : {attacker.Matricule} attaque le : {victim.Role}, au matricule {victim.Matricule}, et lui inflige: {attacker.Damage} dégâts,  vie restante : {victim.Health} ");
+
+            if (victim.Health <= 0)
+            {
+                if (victim.IsHero)
+                    Console.WriteLine(
+                        $"\nLe héro des Stormtroopers au matricule {victim.Matricule} est mort ");
+                else
+                    Console.WriteLine($"\nLe {victim.Role} au matricule {victim.Matricule} est mort ");
+
+                victim.IsAlive = false;
+            }
+        }
+
+        public void WhoHasWon()
+        {
+            var winner = _rebels.Count(item => item.IsAlive == true) == 0 ? "Stormtrooper" : "Rebel";
+
+            Console.WriteLine($"L'équipe des {winner} a gagné");
+
+            if (FavsManagersServices.GetFavs(_rebels, _stormtroopers).Equals(winner))
+                Console.WriteLine("\nElle était désignée comme favorie");
+            else
+                Console.WriteLine("\nElle n'était pas désignée comme favorie");
+        }
 
         public void StartWar()
         {
-            Init();
-            var HeroRebel = HeroesManagerServices.GetHero(_rebels);
-            var HeroStormtrooper = HeroesManagerServices.GetHero(_stormtroopers);
+            int nbSoldiers;
+
+            do
+            {
+                Console.WriteLine("Combien Voulez vous de soldat :");
+                nbSoldiers = int.Parse(Console.ReadLine());
+            } while (!Init(nbSoldiers));
 
             var TeamFav = FavsManagersServices.GetFavs(_rebels, _stormtroopers);
+
             Console.WriteLine($"Voici l'équipe favorite de la bataille : {TeamFav}");
+            Console.ReadLine();
 
             var WarOver = false;
+            
             while (!WarOver)
             {
-                var CurrentRebel = GetSoldierAlive(_rebels);
-                var CurrentStormtrooper = GetSoldierAlive(_stormtroopers);
+                var CurrentRebel = PickAnAliveSoldier(_rebels);
+                var CurrentStormtrooper = PickAnAliveSoldier(_stormtroopers);
+
+                SeparateLineConsole();
+
                 if (CurrentRebel != null && CurrentStormtrooper != null)
                 {
-                    var ChooseWhoAttack = _random.Next(1, 10);
-                    if (ChooseWhoAttack % 2 == 0)
-                    {
-                        SeparateLineConsole();
+                    Fight(CurrentRebel, CurrentStormtrooper);
 
-                        CurrentRebel.Attack(CurrentStormtrooper);
-                        Console.WriteLine(
-                            $"\nle soldat Rebel au matricule : {CurrentRebel.Matricule} Attack est inflige : {CurrentRebel.Damage} au Stormtrooper : {CurrentStormtrooper.Matricule} Santé restante : {CurrentStormtrooper.Health} ");
-
-                        if (CurrentStormtrooper.Health <= 0)
-                        {
-                            if (HeroStormtrooper == CurrentStormtrooper)
-                                Console.WriteLine(
-                                    $"\nle Heros des Stormtrooper au matricule {CurrentStormtrooper.Matricule} est mort ");
-
-                            else
-                                Console.WriteLine(
-                                    $"\nle soldat Stormtrooper au matricule {CurrentStormtrooper.Matricule} est mort ");
-                            CurrentStormtrooper.IsAlive = false;
-                        }
-
-                        SeparateLineConsole();
-                    }
-                    else
-                    {
-                        SeparateLineConsole();
-                        CurrentStormtrooper.Attack(CurrentRebel);
-                        Console.WriteLine(
-                            $"\nle soldat Stormtrooper au matricule : {CurrentStormtrooper.Matricule} Attack est inflige : {CurrentStormtrooper.Damage} au Stormtrooper : {CurrentRebel.Matricule} Santé restante : {CurrentRebel.Health} ");
-                        if (CurrentRebel.Health <= 0)
-                        {
-                            if (HeroRebel == CurrentRebel)
-                                Console.WriteLine(
-                                    $"\nle Heros des Rebel au matricule {CurrentRebel.Matricule} est mort ");
-
-                            else
-                                Console.WriteLine($"\nle soldat Rebel au matricule {CurrentRebel.Matricule} est mort ");
-                            CurrentRebel.IsAlive = false;
-                        }
-
-                        SeparateLineConsole();
-                    }
+                    SeparateLineConsole();
                 }
                 else
                 {
-                    if (CurrentStormtrooper != null)
-                    {
-                        SeparateLineConsole();
-                        Console.WriteLine("Stormtrooper à gagné");
-                        if (TeamFav.Equals(CurrentStormtrooper.GetTypeTeam()))
-                            Console.WriteLine("\nIl était le favorie");
-                        else
-                            Console.WriteLine("il n'était pas le favorie");
-                    }   
-                    else
-                    {
-                        SeparateLineConsole();
-                        Console.WriteLine("Rebel à gagné");
-                        if (TeamFav.Equals(CurrentRebel.GetTypeTeam()))
-                            Console.WriteLine("\nIl était le favorie");
-                        else
-                            Console.WriteLine("il n'était pas le favorie");
-                    }
-
-                    Console.WriteLine("\nGuerre terminé ");
+                    WhoHasWon();
                     WarOver = true;
+                    Console.WriteLine("\nGuerre terminée ");
                 }
             }
         }

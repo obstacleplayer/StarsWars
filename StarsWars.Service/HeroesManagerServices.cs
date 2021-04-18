@@ -6,7 +6,7 @@ namespace StarsWars.Service
 {
     public class HeroesManagerServices
     {
-        public static Soldiers GetHero(HashSet<Soldiers> soldiers) => soldiers.OrderByDescending(item => (item.Damage + item.Health) * 10).First();
+        public static Soldier GetHero(List<Soldier> soldiers) => soldiers.OrderByDescending(item => (item.Damage + item.Health) * 10).First();
         
     }
 }
